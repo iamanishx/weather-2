@@ -1,5 +1,4 @@
-import React from "react";
-import "./current-weather.css";
+ import "./current-weather.css";
 
  interface WeatherData {
   city: string;

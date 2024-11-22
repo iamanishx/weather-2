@@ -8,40 +8,50 @@ import {
 } from "react-accessible-accordion";
 import "./forecast.css";
 
+
 const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-// Define types for the Forecast component's props
+ interface WeatherMain {
+  temp_max: number;
+  temp_min: number;
+  pressure: number;
+  humidity: number;
+  sea_level?: number;  
+  feels_like: number;
+}
+
+interface Weather {
+  description: string;
+  icon: string;
+}
+
+interface Clouds {
+  all: number;
+}
+
+interface Wind {
+  speed: number;
+}
+
 interface WeatherItem {
-  main: {
-    temp_max: number;
-    temp_min: number;
-    pressure: number;
-    humidity: number;
-    sea_level: number;
-    feels_like: number;
-  };
-  weather: {
-    description: string;
-    icon: string;
-  }[];
-  clouds: {
-    all: number;
-  };
-  wind: {
-    speed: number;
-  };
+  main: WeatherMain;
+  weather: Weather[];
+  clouds: Clouds;
+  wind: Wind;
+}
+
+interface ForecastData {
+  list: WeatherItem[];
 }
 
 interface ForecastProps {
-  data: {
-    list: WeatherItem[];
-  };
+  data: ForecastData;
 }
 
 const Forecast: React.FC<ForecastProps> = ({ data }) => {
   const dayInAWeek = new Date().getDay();
-  const forecastDays = WEEK_DAYS.slice(dayInAWeek, WEEK_DAYS.length).concat(WEEK_DAYS.slice(0, dayInAWeek));
-  
+  const forecastDays = WEEK_DAYS.slice(dayInAWeek).concat(WEEK_DAYS.slice(0, dayInAWeek));
+
   return (
     <>
       <label className="title">Daily</label>
@@ -51,10 +61,16 @@ const Forecast: React.FC<ForecastProps> = ({ data }) => {
             <AccordionItemHeading>
               <AccordionItemButton>
                 <div className="daily-item">
-                  <img src={`icons/${item.weather[0].icon}.png`} className="icon-small" alt="weather" />
+                  <img
+                    src={`icons/${item.weather[0].icon}.png`}
+                    className="icon-small"
+                    alt="weather"
+                  />
                   <label className="day">{forecastDays[idx]}</label>
                   <label className="description">{item.weather[0].description}</label>
-                  <label className="min-max">{Math.round(item.main.temp_max)}°C / {Math.round(item.main.temp_min)}°C</label>
+                  <label className="min-max">
+                    {Math.round(item.main.temp_max)}°C / {Math.round(item.main.temp_min)}°C
+                  </label>
                 </div>
               </AccordionItemButton>
             </AccordionItemHeading>
@@ -66,7 +82,7 @@ const Forecast: React.FC<ForecastProps> = ({ data }) => {
                 </div>
                 <div className="daily-details-grid-item">
                   <label>Humidity:</label>
-                  <label>{item.main.humidity}</label>
+                  <label>{item.main.humidity}%</label>
                 </div>
                 <div className="daily-details-grid-item">
                   <label>Clouds:</label>
@@ -76,10 +92,12 @@ const Forecast: React.FC<ForecastProps> = ({ data }) => {
                   <label>Wind speed:</label>
                   <label>{item.wind.speed} m/s</label>
                 </div>
-                <div className="daily-details-grid-item">
-                  <label>Sea level:</label>
-                  <label>{item.main.sea_level}m</label>
-                </div>
+                {item.main.sea_level && (
+                  <div className="daily-details-grid-item">
+                    <label>Sea level:</label>
+                    <label>{item.main.sea_level}m</label>
+                  </div>
+                )}
                 <div className="daily-details-grid-item">
                   <label>Feels like:</label>
                   <label>{item.main.feels_like}°C</label>

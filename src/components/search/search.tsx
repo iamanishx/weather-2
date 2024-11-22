@@ -8,8 +8,8 @@ interface SearchProps {
 }
 
 interface SearchData {
-  value: string;
-  label: string;
+  value: string; // Holds latitude and longitude as "lat lon"
+  label: string; // City name and country code
 }
 
 interface CityData {
@@ -24,10 +24,12 @@ interface LoadOptionsResult {
   options: SearchData[];
 }
 
+// Define the Search component
 const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
   const [search, setSearch] = useState<SearchData | null>(null);
 
-  const loadOptions: LoadOptions<SearchData, LoadOptionsResult> = async (
+  // The loadOptions function that fetches city data
+  const loadOptions: LoadOptions<SearchData, LoadOptionsResult, unknown> = async (
     inputValue: string
   ) => {
     try {
@@ -37,6 +39,7 @@ const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
       );
       const responseData = await response.json();
 
+      // Transform API response into SearchData options
       if (responseData.data && Array.isArray(responseData.data)) {
         const options = responseData.data.map((city: CityData) => ({
           value: `${city.latitude} ${city.longitude}`,
@@ -48,11 +51,12 @@ const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
         return { options: [] };
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching city data:", error);
       return { options: [] };
     }
   };
 
+  // Handle search change and update state
   const handleOnChange = (searchData: SearchData | null) => {
     setSearch(searchData);
     onSearchChange(searchData);
@@ -60,7 +64,7 @@ const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
 
   return (
     <AsyncPaginate
-      placeholder="Search for City"
+      placeholder="Search for a city"
       debounceTimeout={600}
       value={search}
       onChange={handleOnChange}
