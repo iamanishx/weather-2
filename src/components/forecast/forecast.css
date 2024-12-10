@@ -65,3 +65,22 @@
   .daily-details-grid-item label:last-child {
     color: #fbfbfb;
   }
+
+  .daily-item {
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .daily-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .accordion__panel {
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+  }
+  
+  .accordion__panel[aria-expanded="true"] {
+    opacity: 1;
+  }
+  
